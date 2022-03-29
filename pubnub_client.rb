@@ -31,6 +31,14 @@ def ping(params)
    end
 end
 
+def reboot(params)
+   puts "ping #{params}"
+   @pubnub.publish(channel: CHANNEL, message: "rebooting") do |env|
+      puts env.status
+   end
+   `reboot`
+end
+
 def calibrate(params)
    puts "calibrate"
    result = rand(100)

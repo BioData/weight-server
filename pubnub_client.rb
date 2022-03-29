@@ -36,7 +36,7 @@ def reboot(params)
    @pubnub.publish(channel: CHANNEL, message: "rebooting") do |env|
       puts env.status
    end
-   `reboot`
+   `sudo reboot`
 end
 
 def calibrate(params)

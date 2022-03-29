@@ -52,9 +52,10 @@ end
 
 def calibrate(params)
    puts "calibrate"
-   result = rand(100)
-   return_message = {"value": "#{result} gr"}
-   @pubnub.publish(channel: CHANNEL, message: return_message) do |env|
+   ip = params["ip"]
+   port = params["port"]
+   value = `ruby mt.rb #{ip} #{port} C1`
+   @pubnub.publish(channel: CHANNEL, message: value) do |env|
       puts env.status
    end
 end

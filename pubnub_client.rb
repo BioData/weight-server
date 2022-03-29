@@ -6,20 +6,36 @@ SUBSCRIBE_KEY=lines[1].gsub("\n","")
 FLOW_CREDS=lines[2].gsub("\n","")
 puts PUBLISH_KEY
 CHANNEL = "scales"
-commands = {get_weight: "get_weight", 
+commands = {get_weight: "get_weight",
             reboot: "reboot",
             update: "update",
             calibrate: "calibrate",
-            simulate: "simulate"}
 
-def simulate
+def simulate(params)
+    puts "simulate"
     result = rand(100)
     return_message = {"value": "#{result} gr"}
-    reply = return_message.merge(FLOW_CREDS)
-    @pubnub.publish(channel: CHANNEL, message: reply) do |env|
+    @pubnub.publish(channel: CHANNEL, message: return_message) do |env|
        puts env.status
     end
-end 
+end
+
+def ping(params)
+   puts "simulate"
+   return_message = {"value":`ping #{params}`}
+   @pubnub.publish(channel: CHANNEL, message: return_message) do |env|
+      puts env.status
+   end
+end
+
+def calibrate(params)
+   puts "calibrate"
+   result = rand(100)
+   return_message = {"value": "#{result} gr"}
+   @pubnub.publish(channel: CHANNEL, message: return_message) do |env|
+      puts env.status
+   end
+end
 
 @pubnub = Pubnub.new(publish_key: PUBLISH_KEY,
    subscribe_key: SUBSCRIBE_KEY,
@@ -32,9 +48,7 @@ callback = Pubnub::SubscribeCallback.new(
      puts "MESSAGE: #{envelope.result[:data]}"
      cmd = envelope.result.dig(:data,:message,'cmd')
      params = envelope.result.dig(:data,:message,'params')
-     if commands[cmd]
-        commands[cmd].call(params)
-     end 
+     send(cmd.to_sym,params)
   }
 )
 

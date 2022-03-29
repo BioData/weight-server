@@ -21,8 +21,9 @@ def simulate(params)
 end
 
 def ping(params)
-   puts "simulate"
+   puts "ping #{params}"
    return_message = {"value":`ping #{params}`}
+   puts return_message
    @pubnub.publish(channel: CHANNEL, message: return_message) do |env|
       puts env.status
    end

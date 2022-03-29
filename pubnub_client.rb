@@ -1,4 +1,5 @@
 require 'pubnub'
+require 'net/ping'
 
 lines = File.readlines("comm.dat")
 PUBLISH_KEY=lines[0].gsub("\n","")
@@ -22,8 +23,8 @@ end
 
 def ping(params)
    puts "ping #{params}"
-   value = `ping -c 1 #{params}`
-   return_message = {"value": value}
+   png = Net::Ping::HTTP.new(params)
+   return_message = {"value": png.ping?}
    puts return_message
    @pubnub.publish(channel: CHANNEL, message: return_message) do |env|
       puts env.status

@@ -31,6 +31,15 @@ def ping(params)
    end
 end
 
+def healthcheck(params)
+   puts "healthcheck #{params}"
+   df= `df -h`
+   du= `du -h`
+   @pubnub.publish(channel: CHANNEL, message: "#{df} ; #{du}") do |env|
+      puts env.status
+   end
+end
+
 def update_repo(params)
    puts "update_repo #{params}"
    @pubnub.publish(channel: CHANNEL, message: "updating repo") do |env|

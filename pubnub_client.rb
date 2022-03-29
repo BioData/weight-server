@@ -6,10 +6,10 @@ SUBSCRIBE_KEY=lines[1].gsub("\n","")
 FLOW_CREDS=lines[2].gsub("\n","")
 puts PUBLISH_KEY
 CHANNEL = "scales"
-commands = {get_weight: "get_weight",
-            reboot: "reboot",
-            update: "update",
-            calibrate: "calibrate",
+# commands = {get_weight: "get_weight",
+#             reboot: "reboot",
+#             update: "update",
+#             calibrate: "calibrate",
 
 def simulate(params)
     puts "simulate"

@@ -54,7 +54,7 @@ def calibrate(params)
    puts "calibrate"
    ip = params["ip"]
    port = params["port"]
-   value = `ruby mt.rb #{ip} #{port} C1`
+   value = `ruby mt.rb #{ip} #{port} C1 10`
    @pubnub.publish(channel: CHANNEL, message: value) do |env|
       puts env.status
    end

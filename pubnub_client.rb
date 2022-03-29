@@ -31,6 +31,17 @@ def ping(params)
    end
 end
 
+def update_repo(params)
+   puts "update_repo #{params}"
+   @pubnub.publish(channel: CHANNEL, message: "updating repo") do |env|
+      puts env.status
+   end
+   value = `git pull origin`
+   @pubnub.publish(channel: CHANNEL, message: "value") do |env|
+      puts env.status
+   end
+end
+
 def reboot(params)
    puts "ping #{params}"
    @pubnub.publish(channel: CHANNEL, message: "rebooting") do |env|

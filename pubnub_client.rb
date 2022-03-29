@@ -22,7 +22,8 @@ end
 
 def ping(params)
    puts "ping #{params}"
-   return_message = {"value":`ping #{params}`}
+   value = `ping -c 1 #{params}`
+   return_message = {"value": value}
    puts return_message
    @pubnub.publish(channel: CHANNEL, message: return_message) do |env|
       puts env.status

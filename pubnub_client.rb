@@ -36,7 +36,7 @@ def healthcheck(params)
    df= `df / -h`
    temp = `vcgencmd measure_temp`
    mem = `vcgencmd get_mem`
-   @pubnub.publish(channel: CHANNEL, message: "#{df} \n #{du} \n #{temp} \n #{mem}") do |env|
+   @pubnub.publish(channel: CHANNEL, message: "#{df} \n #{temp} \n #{mem}") do |env|
       puts env.status
    end
 end

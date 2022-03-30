@@ -35,7 +35,9 @@ def healthcheck(params)
    puts "healthcheck #{params}"
    df= `df -h`
    du= `du -h`
-   @pubnub.publish(channel: CHANNEL, message: "#{df} ; #{du}") do |env|
+   temp = `vcgencmd measure_temp`
+   mem = `vcgencmd get_mem`
+   @pubnub.publish(channel: CHANNEL, message: "#{df} \n #{du} \n #{temp} \n #{mem}") do |env|
       puts env.status
    end
 end

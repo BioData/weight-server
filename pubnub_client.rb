@@ -98,7 +98,7 @@ end
 time = Time.now 
 while(true)
  #do nothing
- if time + 60 * 5 > Time.now #every 5 minutes
+ if Time.now > time + 60 * 5   #every 5 minutes
    healthcheck({})
    time = Time.now 
  end 

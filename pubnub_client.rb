@@ -20,8 +20,8 @@ def simulate(params)
     @pubnub.publish(channel: CHANNEL, message: return_message) do |env|
        puts env.status
     end
-    data = {"item" : { "value" : "#{return_message || '???'}" }}
-    RestClient.post(SERVER, data)
+    data = {item: { value: "#{return_message || '???'}" }}
+    RestClient.post(SERVER, data.to_json)
 end
 
 def get_weight(params)
@@ -32,8 +32,8 @@ def get_weight(params)
    @pubnub.publish(channel: CHANNEL, message: value) do |env|
       puts env.status
    end
-   data = {"item" : { "value" : "#{value || '????'}" }}
-   RestClient.post(SERVER, data)
+   data = {item: { value: "#{value || '????'}" }}
+   RestClient.post(SERVER, data.to_json)
 end
 
 def ping(params)

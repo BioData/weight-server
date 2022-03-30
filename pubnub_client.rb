@@ -5,6 +5,7 @@ lines = File.readlines("comm.dat")
 PUBLISH_KEY=lines[0].gsub("\n","")
 SUBSCRIBE_KEY=lines[1].gsub("\n","")
 FLOW_CREDS=lines[2].gsub("\n","")
+SERVER=lines[3].gsub("\n","")
 puts PUBLISH_KEY
 CHANNEL = "scales"
 # commands = {get_weight: "get_weight",
@@ -19,6 +20,20 @@ def simulate(params)
     @pubnub.publish(channel: CHANNEL, message: return_message) do |env|
        puts env.status
     end
+    data = {"item" : { "value" : "#{return_message || '???'}" }}
+    RestClient.post(SERVER, data)
+end
+
+def get_weight(params)
+   puts "get_weight"
+   ip = params["ip"]
+   port = params["port"]
+   value = `ruby mt.rb #{ip} #{port} C1 10`
+   @pubnub.publish(channel: CHANNEL, message: value) do |env|
+      puts env.status
+   end
+   data = {"item" : { "value" : "#{value || '????'}" }}
+   RestClient.post(SERVER, data)
 end
 
 def ping(params)
@@ -70,6 +85,8 @@ def calibrate(params)
       puts env.status
    end
 end
+
+
 
 @pubnub = Pubnub.new(publish_key: PUBLISH_KEY,
    subscribe_key: SUBSCRIBE_KEY,

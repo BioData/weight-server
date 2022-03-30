@@ -34,7 +34,7 @@ end
 def healthcheck(params)
    puts "healthcheck #{params}"
    df= `df / -h`
-   df = df.gsub("Filesystem Size Used Avail Use% Mounted on\n/dev/root","")
+   df.gsub("Filesystem      Size  Used Avail Use% Mounted on\n/dev/root        ","").gsub("/\n","")
    temp = `vcgencmd measure_temp`
    mem = `vcgencmd get_mem arm   `
    @pubnub.publish(channel: CHANNEL, message: "#{df} \n #{temp} \n #{mem}") do |env|
@@ -95,7 +95,11 @@ callback = Pubnub::SubscribeCallback.new(
 end
 
 
-
+time = Time.now 
 while(true)
  #do nothing
+ if time + 60 * 5 > Time.now #every 5 minutes
+   healthcheck({})
+   time = Time.now 
+ end 
 end

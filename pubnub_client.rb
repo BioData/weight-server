@@ -34,8 +34,9 @@ end
 def healthcheck(params)
    puts "healthcheck #{params}"
    df= `df / -h`
+   df = df.gsub("Filesystem Size Used Avail Use% Mounted on\n/dev/root","")
    temp = `vcgencmd measure_temp`
-   mem = `vcgencmd get_mem`
+   mem = `vcgencmd get_mem arm   `
    @pubnub.publish(channel: CHANNEL, message: "#{df} \n #{temp} \n #{mem}") do |env|
       puts env.status
    end

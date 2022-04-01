@@ -1,11 +1,13 @@
 require 'pubnub'
 require 'net/ping'
+require 'rest-client'
 
 lines = File.readlines("comm.dat")
 PUBLISH_KEY=lines[0].gsub("\n","")
 SUBSCRIBE_KEY=lines[1].gsub("\n","")
 FLOW_CREDS=lines[2].gsub("\n","")
 SERVER=lines[3].gsub("\n","")
+LGPINUM=lines[4].gsub("\n","")
 puts PUBLISH_KEY
 CHANNEL = "scales"
 # commands = {get_weight: "get_weight",
@@ -21,19 +23,25 @@ def simulate(params)
        puts env.status
     end
     data = {item: { value: "#{return_message || '???'}" }}
-    RestClient.post(SERVER, data.to_json)
+    RestClient.post(SERVER, data)
 end
 
 def get_weight(params)
    puts "get_weight"
    ip = params["ip"]
    port = params["port"]
-   value = `ruby mt.rb #{ip} #{port} C1 10`
+   value = `ruby mt.rb #{ip} #{port} C1 3`
    @pubnub.publish(channel: CHANNEL, message: value) do |env|
       puts env.status
    end
-   data = {item: { value: "#{value || '????'}" }}
-   RestClient.post(SERVER, data.to_json)
+   if value.nil? || value == ''
+    value ="???"
+   end
+   data = {item: { value: "#{value}" }}
+   puts SERVER
+   puts data
+   res =   RestClient.post(SERVER, data)
+   puts res
 end
 
 def ping(params)
@@ -49,10 +57,10 @@ end
 def healthcheck(params)
    puts "healthcheck #{params}"
    df= `df / -h`
-   df.gsub("Filesystem      Size  Used Avail Use% Mounted on\n/dev/root        ","").gsub("/\n","")
+   df = df.gsub("Filesystem      Size  Used Avail Use% Mounted on\n/dev/root        ","").gsub("/\n","")
    temp = `vcgencmd measure_temp`
    mem = `vcgencmd get_mem arm   `
-   @pubnub.publish(channel: CHANNEL, message: "#{df} \n #{temp} \n #{mem}") do |env|
+   @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: #{df} \n #{temp} \n #{mem}") do |env|
       puts env.status
    end
 end
@@ -112,11 +120,11 @@ callback = Pubnub::SubscribeCallback.new(
 end
 
 
-time = Time.now 
+time = Time.now
 while(true)
  #do nothing
  if Time.now > time + 60 * 5   #every 5 minutes
    healthcheck({})
-   time = Time.now 
- end 
+   time = Time.now
+ end
 end

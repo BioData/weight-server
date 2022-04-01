@@ -117,7 +117,7 @@ callback = Pubnub::SubscribeCallback.new(
 
 @pubnub.subscribe( channels:[CHANNEL],  with_presence: true)
 
-@pubnub.publish(channel: CHANNEL, message: {text: 'hello world'}) do |env|
+@pubnub.publish(channel: CHANNEL, message: {text: "#{LGPINUM}: I'm up"}) do |env|
   puts env.status
 end
 

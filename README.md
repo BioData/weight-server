@@ -31,14 +31,10 @@ sudo snap install core
 sudo snap install ruby --classic
 
 ## gems required:
-`gem install net-ping pubnub rest-client --no-doc`
+`gem install bundler net-ping pubnub rest-client --no-doc`
 
 # setup the git repo
+`git config --global credential.helper store`
 `git clone https://github.com/BioData/weight-server.git`
 
-
-
-pub-c-78683cc0-1c65-4dac-9e5b-9e0a7d29f920
-sub-c-69ae6d54-af8d-11ec-ab44-ba44ac190480
-{"flow_id":"171", "token":"498fc2cab8102512115b3"}
-https://pace-flow.labguru.com/flows/27/flow_runs/external_trigger.json?token=a52b5afafdb5a4ae0550d
+# setup rc.local 

@@ -49,7 +49,7 @@ def ping(params)
    png = Net::Ping::HTTP.new(params)
    return_message = {"value": png.ping?}
    puts return_message
-   @pubnub.publish(channel: CHANNEL, message: return_message) do |env|
+   @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: #{return_message}") do |env|
       puts env.status
    end
 end
@@ -57,7 +57,9 @@ end
 def healthcheck(params)
    puts "healthcheck #{params}"
    df= `df / -h`
-   df = df.gsub("Filesystem      Size  Used Avail Use% Mounted on\n/dev/root        ","").gsub("/\n","")
+   df = df.gsub("Filesystem", "")
+   df = df.gsub("Size","")
+   df = df.gsub("Used Avail Use% Mounted on\n/dev/root        ","").gsub("/\n","")
    temp = `vcgencmd measure_temp`
    mem = `vcgencmd get_mem arm   `
    @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: #{df} \n #{temp} \n #{mem}") do |env|
@@ -67,18 +69,18 @@ end
 
 def update_repo(params)
    puts "update_repo #{params}"
-   @pubnub.publish(channel: CHANNEL, message: "updating repo") do |env|
+   @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}:updating repo") do |env|
       puts env.status
    end
    value = `git pull origin`
-   @pubnub.publish(channel: CHANNEL, message: "value") do |env|
+   @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}:#{value}") do |env|
       puts env.status
    end
 end
 
 def reboot(params)
    puts "ping #{params}"
-   @pubnub.publish(channel: CHANNEL, message: "rebooting") do |env|
+   @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}:rebooting") do |env|
       puts env.status
    end
    `sudo reboot`
@@ -89,7 +91,7 @@ def calibrate(params)
    ip = params["ip"]
    port = params["port"]
    value = `ruby mt.rb #{ip} #{port} C1 10`
-   @pubnub.publish(channel: CHANNEL, message: value) do |env|
+   @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: #{value}") do |env|
       puts env.status
    end
 end

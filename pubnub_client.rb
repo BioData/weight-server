@@ -101,6 +101,7 @@ def update_pi(params)
   `sudo apt-get upgrade --fix-missing -y`
   @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: updated") do |env|
    puts env.status
+  end
 end
 
 def update_repo(params)

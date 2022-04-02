@@ -63,12 +63,14 @@ end
 def update_params(params)
    updated = false 
    if params["LGPINUM"] 
-     if params["LGPINUM"]  == LGPINUM
+     if params["LGPINUM"] == LGPINUM
+       puts params
        lines[params["line"]] = params["value"]
-       File.write("comm.dat",lines.join("\n"))
+       updated = File.write("comm.dat",lines.join("\n"))
      end 
    else 
       lines[params["line"]] = params["value"]
+      File.write("comm.dat",lines.join("\n"))
    end
    @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: Updated: #{updated}") do |env|
       puts env.status

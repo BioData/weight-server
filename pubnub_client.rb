@@ -62,11 +62,15 @@ end
 
 def update_params(params)
    updated = false 
+   lines = File.readlines("comm.dat").map(&:chomp)
    if params["LGPINUM"] 
      if params["LGPINUM"] == LGPINUM
-       puts params
        lines[params["line"]] = params["value"]
-       updated = File.write("comm.dat",lines.join("\n"))
+       begin 
+         updated = File.write("comm.dat",lines.join("\n"))
+       rescue 
+         puts "ERR"
+       end 
      end 
    else 
       lines[params["line"]] = params["value"]

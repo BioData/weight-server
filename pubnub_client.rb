@@ -2,12 +2,12 @@ require 'pubnub'
 require 'net/ping'
 require 'rest-client'
 
-lines = File.readlines("comm.dat")
-PUBLISH_KEY=lines[0].gsub("\n","")
-SUBSCRIBE_KEY=lines[1].gsub("\n","")
-FLOW_CREDS=lines[2].gsub("\n","")
-SERVER=lines[3].gsub("\n","")
-LGPINUM=lines[4].gsub("\n","")
+lines = File.readlines("comm.dat").map(&:chomp)
+PUBLISH_KEY=lines[0]
+SUBSCRIBE_KEY=lines[1]
+FLOW_CREDS=lines[2]
+SERVER=lines[3]
+LGPINUM=lines[4]
 puts PUBLISH_KEY
 CHANNEL = "scales"
 # commands = {get_weight: "get_weight",
@@ -53,6 +53,28 @@ def ping(params)
       puts env.status
    end
 end
+
+def echo(params)
+   @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: I'm Here") do |env|
+      puts env.status
+   end
+end
+
+def update_params(params)
+   updated = false 
+   if params["LGPINUM"] 
+     if params["LGPINUM"]  == LGPINUM
+       lines[params["line"]] = params["value"]
+       File.write("comm.dat",lines.join("\n"))
+     end 
+   else 
+      lines[params["line"]] = params["value"]
+   end
+   @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: Updated: #{updated}") do |env|
+      puts env.status
+   end
+end
+
 
 def healthcheck(params)
    puts "healthcheck #{params}"

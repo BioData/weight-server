@@ -63,15 +63,13 @@ end
 def update_params(params)
    updated = false 
    lines = File.readlines("comm.dat").map(&:chomp)
-   if params["LGPINUM"] 
-     if params["LGPINUM"] == LGPINUM
-       lines[params["line"]] = params["value"]
-       begin 
-         updated = File.write("comm.dat",lines.join("\n"))
-       rescue 
-         puts "ERR"
-       end 
-     end 
+   if params["LGPINUM"] && params["LGPINUM"] == LGPINUM
+      lines[params["line"]] = params["value"]
+      begin 
+        updated = File.write("comm.dat",lines.join("\n"))
+      rescue 
+        puts "ERR"
+      end 
    else 
       lines[params["line"]] = params["value"]
       File.write("comm.dat",lines.join("\n"))
@@ -93,6 +91,16 @@ def healthcheck(params)
    @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: #{df} \n #{temp} \n #{mem}") do |env|
       puts env.status
    end
+end
+
+def update_pi(params)
+   @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}:updating") do |env|
+      puts env.status
+   end
+  `sudo apt-get update -y`
+  `sudo apt-get upgrade --fix-missing -y`
+  @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: updated") do |env|
+   puts env.status
 end
 
 def update_repo(params)

@@ -40,6 +40,9 @@ def get_weight(params)
    data = {item: { value: "#{value}" }}
    puts SERVER
    puts data
+   @pubnub.publish(channel: CHANNEL, message: "sending request to #{SERVER} with #{value}") do |env|
+      puts env.status
+   end
    res =   RestClient.post(SERVER, data)
    puts res
 end
@@ -60,6 +63,7 @@ def echo(params)
    end
 end
 
+#{"cmd":"update_params","params":{"LGPINUM": "3", "line":5,"value":"test"}}
 def update_params(params)
    updated = false 
    lines = File.readlines("comm.dat").map(&:chomp)

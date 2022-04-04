@@ -29,7 +29,7 @@ end
 
 def get_device_ip(params)
    ip = Socket.ip_address_list.detect{|intf| intf.ipv4_private?}
-   ip.ip_address
+   val = ip.ip_address
    @pubnub.publish(channel: CHANNEL, message: val) do |env|
       puts env.status
    end

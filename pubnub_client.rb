@@ -1,6 +1,7 @@
 require 'pubnub'
 require 'net/ping'
 require 'rest-client'
+require 'socket'
 
 lines = File.readlines("comm.dat").map(&:chomp)
 PUBLISH_KEY=lines[0]
@@ -27,8 +28,8 @@ def simulate(params)
 end
 
 def get_device_ip(params)
-   cmd = "ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
-   val = `cmd`
+   ip = Socket.ip_address_list.detect{|intf| intf.ipv4_private?}
+   ip.ip_address
    @pubnub.publish(channel: CHANNEL, message: val) do |env|
       puts env.status
    end

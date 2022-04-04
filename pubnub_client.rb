@@ -26,6 +26,14 @@ def simulate(params)
     RestClient.post(SERVER, data)
 end
 
+def get_device_ip(params)
+   cmd = "ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
+   val = `cmd`
+   @pubnub.publish(channel: CHANNEL, message: val) do |env|
+      puts env.status
+   end
+end 
+
 def get_weight(params)
    puts "get_weight"
    ip = params["ip"]

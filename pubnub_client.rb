@@ -30,7 +30,7 @@ def get_weight(params)
    puts "get_weight"
    ip = params["ip"]
    port = params["port"]
-   value = `ruby mt.rb #{ip} #{port} C1 3`
+   value = `ruby mt.rb #{ip} #{port} S 1 5`
    @pubnub.publish(channel: CHANNEL, message: value) do |env|
       puts env.status
    end
@@ -40,9 +40,6 @@ def get_weight(params)
    data = {item: { value: "#{value}" }}
    puts SERVER
    puts data
-   @pubnub.publish(channel: CHANNEL, message: "sending request to #{SERVER} with #{value}") do |env|
-      puts env.status
-   end
    res =   RestClient.post(SERVER, data)
    puts res
 end

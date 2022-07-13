@@ -152,6 +152,19 @@ def reboot(params)
    `sudo reboot`
 end
 
+def remote_cmd(params) 
+   puts "remote_cmd"
+   ip = params["ip"]
+   port = params["port"]
+   cmd = params['cmd']
+   arg1 = params['arg1'] || ""
+   arg2 = params['arg2'] || ""
+   value = `ruby mt.rb #{ip} #{port} #{cmd} #{arg1} #{arg2}`
+   @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: #{value}") do |env|
+      puts env.status
+   end
+end 
+
 def calibrate(params)
    puts "calibrate"
    ip = params["ip"]

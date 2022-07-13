@@ -30,4 +30,5 @@ while last_read.length < expected_number_of_responses.to_i
  end
 end
 
-puts last_read.join("\n")
+socket.close 
+#puts last_read.join("\n")

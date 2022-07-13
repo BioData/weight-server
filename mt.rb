@@ -15,6 +15,7 @@ Thread.new do |t|
   mutex.synchronize do
     while line = socket.gets # Here we are reading line coming from the socket
         last_read << line.chop
+        puts line.chop 
     end
   end
 end

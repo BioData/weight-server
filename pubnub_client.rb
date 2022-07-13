@@ -149,6 +149,7 @@ def reboot(params)
    @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}:rebooting") do |env|
       puts env.status
    end
+   sleep 2 
    `sudo reboot`
 end
 

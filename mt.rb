@@ -10,14 +10,13 @@ end
 # This is the HTTP request we send to fetch a file
 socket = TCPSocket.open(host,port)  # Connect to server
 last_read = []
-mutex = Mutex.new
+#mutex = Mutex.new
 Thread.new do |t|
-  mutex.synchronize do
+  #mutex.synchronize do
     while line = socket.gets # Here we are reading line coming from the socket
         last_read << line.chop
-        puts line.chop 
     end
-  end
+  #end
 end
 socket.puts("#{cmd}\r\n")
 i = 0
@@ -31,4 +30,4 @@ while last_read.length < expected_number_of_responses.to_i
 end
 
 socket.close 
-#puts last_read.join("\n")
+puts last_read.join("\n")

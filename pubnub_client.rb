@@ -158,24 +158,19 @@ def remote_cmd(params)
    ip = params["ip"]
    port = params["port"]
    cmd = params['cmd']
-   arg1 = params['arg1'] || ""
-   arg2 = params['arg2'] || ""
-   value = `ruby mt.rb #{ip} #{port} #{cmd} #{arg1} #{arg2}`
+   num_of_lines = params['arg1'] || ""
+   time_to_wait = params['arg2'] || ""
+   value = `ruby mt.rb #{ip} #{port} #{cmd} #{num_of_lines} #{time_to_wait}`
    @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: #{value}") do |env|
       puts env.status
    end
+   
+   data = {item: { value: "#{value}" }}
+   puts SERVER
+   puts data
+   res =   RestClient.post(SERVER, data)
+   puts res
 end 
-
-def calibrate(params)
-   puts "calibrate"
-   ip = params["ip"]
-   port = params["port"]
-   value = `ruby mt.rb #{ip} #{port} C1 10`
-   @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: #{value}") do |env|
-      puts env.status
-   end
-end
-
 
 
 @pubnub = Pubnub.new(publish_key: PUBLISH_KEY,

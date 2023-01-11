@@ -65,7 +65,7 @@ def get_weight(params)
    if value.nil? || value == ''
     value ="???"
    end
-   data = {item: { value: "#{value}" }}
+   data = {item: { value: value, ip: ip, port: port }}
    puts SERVER
    puts data
    res =   RestClient.post(SERVER, data)

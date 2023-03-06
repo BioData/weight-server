@@ -47,7 +47,7 @@ def get_weight_with_fallback(params)
    if value.nil? || value == ''
     value = `ruby mt.rb #{ip} #{port} SI 1 2`
    end
-   data = {item: { value: "#{value}" }}
+   data = {item: { value: value, ip: ip, port: port }}
    puts SERVER
    puts data
    res =   RestClient.post(SERVER, data)
@@ -165,7 +165,7 @@ def remote_cmd(params)
       puts env.status
    end
    
-   data = {item: { value: "#{value}" }}
+   data = {item: { value: value, ip: ip, port: port }}
    puts SERVER
    puts data
    res =   RestClient.post(SERVER, data)

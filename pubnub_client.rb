@@ -88,6 +88,14 @@ def echo(params)
    end
 end
 
+#{"cmd":"get_datfile"}
+def get_datfile(params) 
+    lines = File.readlines("comm.dat").map(&:chomp)
+    @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: #{lines.join('\n'}") do |env|
+      puts env.status
+   end
+end 
+
 #{"cmd":"update_params","params":{"LGPINUM": "3", "line":5,"value":"test"}}
 def update_params(params)
    updated = false 

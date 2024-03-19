@@ -50,7 +50,7 @@ def get_weight_with_fallback(params)
     if value.nil? || value.empty?
       value = "Balance did not respond"
 
-      # Post the message to Workflow
+      # Post the value to Workflow
       res = RestClient.post(SERVER, {item: { value: value}})
 
       # Publish the value using PubNub
@@ -91,6 +91,30 @@ def ping(params)
    puts return_message
    @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: #{return_message}") do |env|
       puts env.status
+   end
+end
+
+# {"cmd": "ping_equipment", "params":{"ip": "10.20.30.40", "port": "1234"}}
+def ping_equipment(params)
+   puts "ping #{params}"
+   ip = params["ip"]
+   port = params["port"]
+   value = `ruby mt.rb #{ip} #{port} TIM 1 5`
+   @pubnub.publish(channel: CHANNEL, message: value) do |env|
+      puts env.status
+   end
+
+   # If the value is still nil or empty, indicate that the balance did not respond
+   if value.nil? || value.empty?
+      value = "Balance did not respond"
+
+      # Post the value to Workflow
+      res = RestClient.post(SERVER, {item: { value: value}})
+
+      # Publish the value using PubNub
+      @pubnub.publish(channel: CHANNEL, message: value) do |env|
+         puts env.status
+      end
    end
 end
 

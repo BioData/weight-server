@@ -49,11 +49,6 @@ def get_weight_with_fallback(params)
     # If the value is still nil or empty, indicate that the balance did not respond
     if value.nil? || value.empty?
       value = "Balance did not respond"
-
-      # Post the value to Workflow
-      res = RestClient.post(SERVER, {item: { value: value}})
-
-      # Publish the value using PubNub
       @pubnub.publish(channel: CHANNEL, message: value) do |env|
          puts env.status
       end

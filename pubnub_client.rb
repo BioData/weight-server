@@ -33,19 +33,26 @@ def get_device_ip(params)
    @pubnub.publish(channel: CHANNEL, message: val) do |env|
       puts env.status
    end
-end 
+end
 
 def get_weight_with_fallback(params)
    puts "get_weight_with_fallback"
    ip = params["ip"]
    port = params["port"]
    value = `ruby mt.rb #{ip} #{port} S 1 5`
-   
    @pubnub.publish(channel: CHANNEL, message: value) do |env|
       puts env.status
    end
    if value.nil? || value == ''
     value = `ruby mt.rb #{ip} #{port} SI 1 2`
+
+    # If the value is still nil or empty, indicate that the balance did not respond
+    if value.nil? || value.empty?
+      value = "Balance did not respond"
+      @pubnub.publish(channel: CHANNEL, message: value) do |env|
+         puts env.status
+      end
+    end
    end
    data = {item: { value: value, ip: ip, port: port }}
    puts SERVER
@@ -82,6 +89,30 @@ def ping(params)
    end
 end
 
+# {"cmd": "ping_equipment", "params":{"ip": "10.20.30.40", "port": "1234"}}
+def ping_equipment(params)
+   puts "ping #{params}"
+   ip = params["ip"]
+   port = params["port"]
+   value = `ruby mt.rb #{ip} #{port} TIM 1 5`
+   @pubnub.publish(channel: CHANNEL, message: value) do |env|
+      puts env.status
+   end
+
+   # If the value is still nil or empty, indicate that the balance did not respond
+   if value.nil? || value.empty?
+      value = "Balance did not respond"
+
+      # Post the value to Workflow
+      res = RestClient.post(SERVER, {item: { value: value}})
+
+      # Publish the value using PubNub
+      @pubnub.publish(channel: CHANNEL, message: value) do |env|
+         puts env.status
+      end
+   end
+end
+
 def echo(params)
    @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: I'm Here") do |env|
       puts env.status
@@ -98,16 +129,16 @@ end
 
 #{"cmd":"update_params","params":{"LGPINUM": "3", "line":5,"value":"test"}}
 def update_params(params)
-   updated = false 
+   updated = false
    lines = File.readlines("comm.dat").map(&:chomp)
    if params["LGPINUM"] && params["LGPINUM"] == LGPINUM
       lines[params["line"]] = params["value"]
-      begin 
+      begin
         updated = File.write("comm.dat",lines.join("\n"))
-      rescue 
+      rescue
         puts "ERR"
-      end 
-   else 
+      end
+   else
       lines[params["line"]] = params["value"]
       File.write("comm.dat",lines.join("\n"))
    end
@@ -157,11 +188,11 @@ def reboot(params)
    @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}:rebooting") do |env|
       puts env.status
    end
-   sleep 2 
+   sleep 2
    `sudo reboot`
 end
 
-def remote_cmd(params) 
+def remote_cmd(params)
    puts "remote_cmd"
    ip = params["ip"]
    port = params["port"]
@@ -172,13 +203,13 @@ def remote_cmd(params)
    @pubnub.publish(channel: CHANNEL, message: "#{LGPINUM}: #{value}") do |env|
       puts env.status
    end
-   
+
    data = {item: { value: value, ip: ip, port: port }}
    puts SERVER
    puts data
    res =   RestClient.post(SERVER, data)
    puts res
-end 
+end
 
 
 @pubnub = Pubnub.new(publish_key: PUBLISH_KEY,

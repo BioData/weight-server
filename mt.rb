@@ -11,13 +11,15 @@ end
 socket = TCPSocket.open(host,port)  # Connect to server
 last_read = []
 mutex = Mutex.new
-Thread.new do |t|
-  mutex.synchronize do
-    while line = socket.gets # Here we are reading line coming from the socket
+begin
+  Thread.new do |t|
+    mutex.synchronize do
+      while line = socket.gets # Here we are reading line coming from the socket
         last_read << line.chop
+      end
     end
   end
-end
+
 socket.puts("#{cmd}\r\n")
 i = 0
 
@@ -27,4 +29,6 @@ while i < max_wait_time.to_i
 end
 
 socket.close 
+rescue
+end
 puts last_read.join("\n")

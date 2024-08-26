@@ -1,4 +1,12 @@
-
+require 'socket'
+host = ARGV[0].gsub("\n","")     # The web server
+port = ARGV[1].gsub("\n","")     # The web port 8080                          # Default HTTP port
+cmd  = ARGV[2].gsub("\n","")     # cmd "S for scale" "C1 for calibraiton"
+expected_number_of_responses = ARGV[3].gsub("\n","") || 1
+max_wait_time = 1
+if ARGV[4]
+  max_wait_time = ARGV[4].gsub("\n","")
+end
 
 socket = TCPSocket.open(host, port)  # Connect to server
 last_read = []

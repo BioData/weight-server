@@ -39,12 +39,14 @@ def get_weight_with_fallback(params)
    puts "get_weight_with_fallback"
    ip = params["ip"]
    port = params["port"]
-   value = `ruby mt.rb #{ip} #{port} S 1 5`
+   # value = `ruby mt.rb #{ip} #{port} S 1 5`
+    value = system("ruby mt.rb #{ip} #{port} S 1 5")
    @pubnub.publish(channel: CHANNEL, message: value) do |env|
       puts env.status
    end
    if value.nil? || value == ''
-    value = `ruby mt.rb #{ip} #{port} SI 1 2`
+    # value = `ruby mt.rb #{ip} #{port} SI 1 2`
+       value = system("ruby mt.rb #{ip} #{port} SI 1 2")
 
     # If the value is still nil or empty, indicate that the balance did not respond
     if value.nil? || value.empty?

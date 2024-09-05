@@ -19,11 +19,19 @@ class SocketCommandExecutor
       puts("command #{command}")
       last_read = []
 
-      stdout_str, stderr_str, status = Open3.capture3(command)
-      if status.success?
-         last_read = stdout_str.lines.map(&:chomp)
-      else
-         puts "Error: #{stderr_str.inspect}"
+      Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
+         stdin.puts @cmd  # Send the command to the server
+         stdin.close      # Close stdin when done sending
+
+         stdout_str = stdout.read
+         stderr_str = stderr.read
+
+         if wait_thr.value.success?
+            last_read = stdout_str.lines.map(&:chomp)
+         else
+            puts "Error: #{stderr_str.inspect}"
+            publish_message(stderr_str.inspect)
+         end
       end
 
       sleep @max_wait_time
@@ -37,7 +45,7 @@ class SocketCommandExecutor
    private
 
    def build_command
-      "echo -e \"#{@cmd}\\r\\n\" | nc #{@host} #{@port}"
+      "nc #{@host} #{@port}"
    end
 end
 

@@ -84,7 +84,7 @@ def post_to_server(data)
 rescue => e
    error_msg = "Failed to post data to Labguru: #{e.message}"
    puts error_msg
-   publish_message(error_msg)
+   publish_message("#{LGPINUM}: #{error_msg}")
 
 end
 
@@ -92,20 +92,20 @@ def simulate(params)
    puts "simulate"
    result = rand(100)
    return_message = { value: "#{result} gr" }
-   publish_message(return_message)
+   publish_message("#{LGPINUM}: #{return_message}")
    post_to_server(item: return_message)
 end
 
 def get_device_ip(params)
    ip = Socket.ip_address_list.detect(&:ipv4_private?)&.ip_address
    ip ||= 'Could not find IP'
-   publish_message(ip)
+   publish_message("#{LGPINUM}: #{ip}")
 end
 
 def get_weight(params)
    ip, port = params.values_at("ip", "port")
    value = execute_socket_command(ip, port, 'S', '1', '5')
-   publish_message(value)
+   publish_message("#{LGPINUM}: #{value}")
    post_to_server(item: { value: value, ip: ip, port: port })
 end
 
@@ -113,7 +113,7 @@ def get_weight_with_fallback(params)
    value = get_weight(params)
    if value.nil? || value.empty?
      value = "Balance did not respond"
-     publish_message(value)
+     publish_message("#{LGPINUM}: #{value}")
    end
 end
 
@@ -126,11 +126,11 @@ end
 def ping_equipment(params)
    ip, port = params.values_at("ip", "port")
    value = execute_socket_command(ip, port, "TIM", '1', '5')
-   publish_message(value)
+   publish_message("#{LGPINUM}: #{value}")
 
    if value.nil? || value.empty?
      value = "Balance did not respond"
-     publish_message(value)
+     publish_message("#{LGPINUM}: #{value}")
      post_to_server(item: { value: value })
    end
 end

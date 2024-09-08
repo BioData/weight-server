@@ -15,8 +15,8 @@ class SocketCommandExecutor
    end
 
    def execute
-      command = build_command
-      puts("command #{command}")
+      # command = build_command
+      # puts("command #{command}")
       last_read = []
 
       Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|

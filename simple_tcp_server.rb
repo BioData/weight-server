@@ -44,7 +44,8 @@ class SimpleTCPServer
   rescue StandardError => e
     puts "Error handling client: #{e.message}"
   ensure
-    client.close unless client.closed?
+    client.close if request == 'exit'
+    # client.close unless client.closed?
   end
 end
 

@@ -115,7 +115,7 @@ def get_weight(params)
   value = execute_socket_command(ip, port, 'S', '1', '5')
   puts "value from balance = #{value}"
   publish_message("#{LGPINUM}: #{value}")
-  post_to_server(item: { value: value, ip: ip, port: port 
+  post_to_server(item: { value: value, ip: ip, port: port })
   value
 end
 

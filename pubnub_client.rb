@@ -45,9 +45,9 @@ class SocketCommandExecutor
       end
 
     rescue StandardError => e
-      error_msg = "SocketCommandExecutor error: Failed to execute command '#{@cmd}' on #{@host}:#{@port}. Error: #{e.message}"
-      puts error_msg
-      publish_message("#{LGPINUM}: #{error_msg}")
+      #error_msg = "SocketCommandExecutor error: Failed to execute command '#{@cmd}' on #{@host}:#{@port}. Error: #{e.message}"
+      #puts error_msg
+      #publish_message("#{LGPINUM}: #{error_msg}")
     ensure
       reader_thread.kill if reader_thread && reader_thread.alive?
       socket.close if socket && !socket.closed?

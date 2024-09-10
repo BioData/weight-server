@@ -20,14 +20,21 @@ class SocketCommandExecutor
     mutex = Mutex.new
 
     begin
+      # reader_thread = Thread.new do
+      #   while line = socket.gets # Here we are reading line coming from the socket
+      #     puts "Reading from socket: #{line}"
+      #     mutex.synchronize do
+      #       last_read << line.chop
+      #     end
+      #   end
+      # end
+
       reader_thread = Thread.new do
-        while line = socket.gets # Here we are reading line coming from the socket
+        while line = socket.gets(timeout: 20) # example timeout for reading
           puts "Reading from socket: #{line}"
-          mutex.synchronize do
-            last_read << line.chop
-          end
+          last_read << line.chop
         end
-      end
+     end
 
       puts "Sending command: #{@cmd}"
       socket.puts("#{@cmd}\r\n")

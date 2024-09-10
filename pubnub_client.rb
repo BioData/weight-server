@@ -9,7 +9,7 @@ class SocketCommandExecutor
     @port = port.strip
     @cmd = cmd.strip
     @expected_number_of_responses = expected_number_of_responses.to_i
-    @max_wait_time = max_wait_time.to_i
+    @max_wait_time = max_wait_time.to_i + 10
     @pubnub = pubnub
   end
 
